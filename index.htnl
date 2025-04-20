@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>中学受験理科：天体の総まとめ！SVG & D3.js版</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  <style>
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'メイリオ', sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1, h2, h3 {
+      color: #2c3e50;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .visualization {
+      margin: 30px 0;
+      text-align: center;
+      background-color: white;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 15px;
+    }
+    .description {
+      margin: 15px 0;
+      padding: 10px;
+      background-color: #f1f8ff;
+      border-left: 5px solid #4a90e2;
+    }
+    .star-info {
+      background-color: #000;
+      color: #fff;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+    .star-info h3 {
+      color: #66ccff;
+    }
+    .first-magnitude {
+      color: yellow;
+      font-weight: bold;
+    }
+    .star-color {
+      color: #ccc;
+      font-size: 0.9em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background-color: #000;
+      color: white;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border: 1px solid #333;
+    }
+    th {
+      background-color: #111;
+      color: #66ccff;
+    }
+    .tooltip {
+      position: absolute;
+      padding: 8px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      border-radius: 4px;
+      pointer-events: none;
+      font-size: 12px;
+      z-index: 100;
+    }
+    .controls {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #eee;
+      border-radius: 5px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    button {
+      padding: 5px 10px;
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3a7bc8;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin: 10px 0;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .legend-color {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <h1>中学受験理科：天体の総まとめ！SVG & D3.js版</h1>
+  
+  <h2>天体を攻略する3つの重要図</h2>
+  
+  <h3>その1：透明半球（天球図）</h3>
+  <div class="visualization">
+    <div id="celestial-hemisphere"></div>
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: red;"></div>
+        <span>夏至</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: orange;"></div>
+        <span>春分・秋分</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: blue;"></div>
+        <span>冬至</span>
+      </div>
+    </div>
+    <div class="controls">
+      <button id="play-sun">再生/停止</button>
+      <button id="reset-sun">リセット</button>
+    </div>
+  </div>
+  <div class="description">
+    <p><strong>透明半球（天球図）とは？</strong> 空を半球に見立てて、太陽や星の動きを記録するためのものです。</p>
+    <p><strong>見方・使い方</strong></p>
+    <ul>
+      <li><strong>方角の確認:</strong> 太陽が一番高くなるところ（南中）の真下が「南」です。南を向けば、左手が「東」、右手が「西」、後ろが「北」になります。</li>
+      <li><strong>太陽の動き:</strong> 太陽は基本的に東から昇り、南の空を通って西へ沈みます。</li>
+      <li><strong>季節による違い:</strong>
+        <ul>
+          <li><strong>夏至（6月下旬）：</strong> 最も軌道が高く、日の出は真東より北寄り、日の入りは真西より北寄り。昼が一番長い。</li>
+          <li><strong>春分（3月下旬）・秋分（9月下旬）：</strong> 真東から昇り、真西に沈む。昼と夜の長さがほぼ同じ。</li>
+          <li><strong>冬至（12月下旬）：</strong> 最も軌道が低く、日の出は真東より南寄り、日の入りは真西より南寄り。昼が一番短い。</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <h3>その1.5：星の動き（日周運動）</h3>
+  <div class="visualization">
+    <div id="star-movement"></div>
+    <div class="controls">
+      <button id="play-stars">再生/停止</button>
+      <button id="reset-stars">リセット</button>
+    </div>
+  </div>
+  <div class="description">
+    <p><strong>星の動き（日周運動）：</strong> 星も太陽と同じように、東から昇り西へ沈むように見えます（地球の自転による見かけの動き）。</p>
+    <ul>
+      <li><strong>北の空:</strong> 北極星（こぐま座の一部）を中心に、反時計回りに星が回って見えます。</li>
+      <li><strong>北極星の高度:</strong> その場所の緯度とほぼ同じになります。日本の多くの場所（例：東京や明石）は約35度です。</li>
+      <li><strong>南の空:</strong> 東から昇り、南で最も高くなり、西へ沈みます（時計回りに見える）。</li>
+    </ul>
+  </div>
+
+  <h3>その2：地軸の傾きがわかる図（季節の図）</h3>
+  <div class="visualization">
+    <div id="earth-axis"></div>
+    <div class="controls">
+      <button id="play-orbit">再生/停止</button>
+      <button id="reset-orbit">リセット</button>
+    </div>
+  </div>
+  <div class="description">
+    <p><strong>何がわかる？</strong> 地球が太陽の周りを公転する中で、地軸が約23.4度傾いているために季節が生まれることがわかります。</p>
+    <p><strong>見方・使い方</strong></p>
+    <ul>
+      <li><strong>夏至:</strong> 地軸の北極側が太陽の方向を向いています。北半球に太陽の光が多く当たるため、昼が長く、太陽の南中高度が高くなります。</li>
+      <li><strong>冬至:</strong> 地軸の北極側が太陽と反対の方向を向いています。北半球に当たる太陽の光が少なくなり、昼が短く、太陽の南中高度が低くなります。</li>
+      <li><strong>春分・秋分:</strong> 地軸の傾きが太陽の方向に対して影響しない位置です。昼と夜の長さがほぼ同じになります。</li>
+      <li><strong>地球の公転方向:</strong> 北極側から見て反時計回りです。</li>
+    </ul>
+  </div>
+
+  <h3>その3：北極から見た図（時刻と方角の図）</h3>
+  <div class="visualization">
+    <div id="north-pole-view"></div>
+    <div class="controls">
+      <button id="play-rotation">再生/停止</button>
+      <button id="reset-rotation">リセット</button>
+    </div>
+  </div>
+  <div class="description">
+    <p><strong>何がわかる？</strong> 地球を北極の真上から見た図です。地球の自転と、それによる時刻、方角の関係がわかります。</p>
+    <p><strong>見方・使い方</strong></p>
+    <ol>
+      <li><strong>自転方向:</strong> 北極から見ると、地球は反時計回りに自転しています。</li>
+      <li><strong>時刻:</strong>
+        <ul>
+          <li>太陽が真南に見える（南中する）のが昼の12時です。</li>
+          <li>太陽が昇ってくる東を向くのが朝6時。</li>
+          <li>太陽が沈む西を向くのが夕方18時。</li>
+          <li>太陽と反対側を向くのが夜中0時（24時）。</li>
+        </ul>
+      </li>
+      <li><strong>方角:</strong>
+        <ul>
+          <li>中心（北極）の方向が「北」。</li>
+          <li>その反対（外側）が「南」。</li>
+          <li>自転方向（反時計回り）が「東」。</li>
+          <li>自転と逆方向（時計回り）が「西」。</li>
+        </ul>
+      </li>
+    </ol>
+    <p><strong>月の満ち欠けへの応用:</strong></p>
+    <ul>
+      <li>この図は月の満ち欠けを考えるときにも非常に役立ちます。</li>
+      <li>地球の周りに月の位置を書き込み、太陽の光が当たっている部分を考えます。</li>
+      <li>特定の時刻に、どの方向（東・南・西）にどの形の月が見えるかを判断できます。
+        <ul>
+          <li>例：夕方（18時）に南中する月は？ → 上弦の月</li>
+          <li>例：満月が朝見える方角は？ → 満月は太陽と反対側。朝（太陽が東）なので、満月は西に見える。</li>
+          <li>例：下弦の月が昇ってくる時刻は？ → 下弦の月は東から昇る。下弦の月が見えるのは夜中0時。</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <h2>＋α：重要な星と星座</h2>
+  <div class="visualization">
+    <div id="constellations"></div>
+  </div>
+
+  <div class="star-info">
+    <h3>北天（一年中見える）</h3>
+    <p><strong>北極星</strong> (こぐま座) <span class="star-color">(黄・2等星)</span></p>
+    <p>おおぐま座 (北斗七星)</p>
+    <p>カシオペヤ座</p>
+    <p><span class="star-color">※北斗七星とカシオペヤ座は北極星を見つけるのに使う</span></p>
+  </div>
+
+  <table>
+    <tr>
+      <th>季節</th>
+      <th>主な星座と一等星</th>
+      <th>覚え方・特徴</th>
+    </tr>
+    <tr>
+      <td>春</td>
+      <td>
+        うしかい座: <span class="first-magnitude">アークトゥルス</span> <span class="star-color">(橙)</span><br>
+        おとめ座: <span class="first-magnitude">スピカ</span> <span class="star-color">(青白)</span><br>
+        しし座: <span class="first-magnitude">レグルス</span> <span class="star-color">(青白)</span>
+      </td>
+      <td>
+        <span class="star-color">※春の大三角: アークトゥルス、スピカ、デネボラ(しし座2等星)</span><br>
+        <span class="star-color">※春の大曲線: 北斗七星の柄→アークトゥルス→スピカ</span>
+      </td>
+    </tr>
+    <tr>
+      <td>夏</td>
+      <td>
+        こと座: <span class="first-magnitude">ベガ</span> <span class="star-color">(白)</span><br>
+        わし座: <span class="first-magnitude">アルタイル</span> <span class="star-color">(白)</span><br>
+        はくちょう座: <span class="first-magnitude">デネブ</span> <span class="star-color">(白)</span><br>
+        さそり座: <span class="first-magnitude">アンタレス</span> <span class="star-color">(赤)</span>
+      </td>
+      <td>
+        <span class="star-color">※夏の大三角: ベガ、アルタイル、デネブ</span>
+      </td>
+    </tr>
+    <tr>
+      <td>秋</td>
+      <td>
+        <span class="star-color">(明るい星は少ない)</span><br>
+        アンドロメダ座<br>
+        ペガスス座<br>
+        みなみのうお座: <span class="first-magnitude">フォーマルハウト</span> <span class="star-color">(白・南の低い空)</span>
+      </td>
+      <td>
+        <span class="star-color">※秋の四辺形 (ペガスス座)</span>
+      </td>
+    </tr>
+    <tr>
+      <td>冬</td>
+      <td>
+        オリオン座: <span class="first-magnitude">ベテルギウス</span> <span class="star-color">(赤)</span>, <span class="first-magnitude">リゲル</span> <span class="star-color">(青白)</span><br>
+        おおいぬ座: <span class="first-magnitude">シリウス</span> <span class="star-color">(白・全天で最も明るい恒星)</span><br>
+        こいぬ座: <span class="first-magnitude">プロキオン</span> <span class="star-color">(黄)</span><br>
+        ふたご座: <span class="first-magnitude">ポルックス</span> <span class="star-color">(橙)</span><br>
+        ぎょしゃ座: <span class="first-magnitude">カペラ</span> <span class="star-color">(黄)</span><br>
+        おうし座: <span class="first-magnitude">アルデバラン</span> <span class="star-color">(橙)</span>
+      </td>
+      <td>
+        <span class="star-color">※冬の大三角: ベテルギウス、シリウス、プロキオン</span><br>
+        <span class="star-color">※冬のダイヤモンド: シリウス、プロキオン、ポルックス、カペラ、アルデバラン、リゲル</span>
+      </td>
+    </tr>
+  </table>
+
+  <div class="description">
+    <p><strong>色の覚え方:</strong></p>
+    <ul>
+      <li><strong>赤/橙:</strong> アンタレス、アルデバラン、アークトゥルス、ベテルギウス、ポルックス (「あ」が多い)</li>
+      <li><strong>青白:</strong> スピカ、レグルス、リゲル (「ス・レ・リ」)</li>
+      <li><strong>黄:</strong> プロキオン、カペラ</li>
+      <li><strong>白:</strong> ベガ、アルタイル、デネブ、シリウス、フォーマルハウト</li>
+    </ul>
+  </div>
+
+  <script>
+    // Tooltip setup
+    const tooltip = d3.select("body")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+    
+    // 1. 透明半球（天球図）の描画
+    function createCelestialHemisphere() {
+      const width = 500;
+      const height = 300;
+      const margin = { top: 20, right: 20, bottom: 50, left: 50 };
+      
+      const svg = d3.select("#celestial-hemisphere")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("viewBox", `0 0 ${width} ${height}`)
+        .attr("preserveAspectRatio", "xMidYMid meet");
+      
+      // 背景グラデーション
+      const defs = svg.append("defs");
+      const gradient = defs.append("linearGradient")
+        .attr("id", "sky-gradient")
+        .attr("x1", "0%")
+        .attr("y1", "0%")
+        .attr("x2", "0%")
+        .attr("y2", "100%");
+      
+      gradient.append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", "#e0f2f7");
+      
+      gradient.append("stop")
+        .attr("offset", "100%")
+        .attr("stop-color", "#ffffff");
+      
+      // 背景
+      svg.append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "url(#sky-gradient)");
+      
+      const centerX = width / 2;
+      const baseY = height - margin.bottom;
+      const radius = 180;
+      
+      // 半円（天球）
+      svg.append("path")
+        .attr("d", d3.arc()
+          .innerRadius(0)
+          .outerRadius(radius)
+          .startAngle(-Math.PI)
+          .endAngle(0)
+        )
+        .attr("transform", `translate(${centerX}, ${baseY})`)
+        .attr("fill", "none")
+        .attr("stroke", "black")
+        .attr("stroke-width", 2);
+      
+      // 地平線
+      svg.append("line")
+        .attr("x1", centerX - radius)
+        .attr("y1", baseY)
+        .attr("x2", centerX + radius)
+        .attr("y2", baseY)
+        .attr("stroke", "black")
+        .attr("stroke-width", 2);
+      
+      // 夏至の太陽軌道
+      svg.append("path")
+        .attr("d", d3.arc()
+          .innerRadius(0)
+          .outerRadius(radius * 0.9)
+          .startAngle(-Math.PI)
+          .endAngle(0)
+        )
+        .attr("transform", `translate(${centerX}, ${baseY})`)
+        .attr("fill", "none")
+        .attr("stroke", "red")
+        .attr("stroke-width", 2)
+        .attr("id", "summer-path")
+        .attr("opacity", 0.7);
+      
+      // 春分・秋分の太陽軌道
+      svg.append("path")
+        .attr("d", d3.arc()
+          .innerRadius(0)
+          .outerRadius(radius * 0.6)
+          .startAngle(-Math.PI)
+          .endAngle(0)
+        )
+        .attr("transform", `translate(${centerX}, ${baseY})`)
+        .attr("fill", "none")
+        .attr("stroke", "orange")
+        .attr("stroke-width", 2)
+        .attr("id", "equinox-path")
+        .attr("opacity", 0.7);
+      
+      // 冬至の太陽軌道
+      svg.append("path")
+        .attr("d", d3.arc()
+          .innerRadius(0)
+          .outerRadius(radius * 0.3)
+          .startAngle(-Math.PI)
+          .endAngle(0)
+        )
+        .attr("transform", `translate(${centerX}, ${baseY})`)
+        .attr("fill", "none")
+        .attr("stroke", "blue")
+        .attr("stroke-width", 2)
+        .attr("id", "winter-path")
+        .attr("opacity", 0.7);
+      
+      // 方角ラベル
+      svg.append("text")
+        .attr("x", centerX)
+        .attr("y", baseY + 25)
+        .attr("text-anchor", "middle")
+        .attr("fill", "red")
+        .style("font-weight", "bold")
+        .text("南");
+      
+      svg.append("text")
+        .attr("x", centerX)
+        .attr("y", baseY - radius - 10)
+        .attr("text-anchor", "middle")
+        .attr("fill", "blue")
+        .style("font-weight", "bold")
+        .text("北");
+      
+      svg.append("text")
+        .attr("x", centerX - radius - 10)
+        .attr("y", baseY)
+        .attr("text-anchor", "end")
+        .attr("fill", "green")
+        .style("font-weight", "bold")
+        .text("東");
+      
+      svg.append("text")
+        .attr("x", centerX + radius + 10)
+        .attr("y", baseY)
+        .attr("text-anchor", "start")
+        .attr("fill", "purple")
+        .style("font-weight", "bold")
+        .text("西");
+      
+      // 太陽
+      const summerSun = svg.append("circle")
+        .attr("r", 10)
+        .attr("fill", "orange")
+        .attr("stroke", "red")
+        .attr("stroke-width", 1.5)
+        .attr("id", "summer-sun")
+        .attr("opacity", 0.8);
+      
+      const equinoxSun = svg.append("circle")
+        .attr("r", 10)
+        .attr("fill", "gold")
+        .attr("stroke", "orange")
+        .attr("stroke-width", 1.5)
+        .attr("id", "equinox-sun")
+        .attr("opacity", 0.8);
+      
+      const winterSun = svg.append("circle")
+        .attr("r", 10)
+        .attr("fill", "lightblue")
+        .attr("stroke", "blue")
+        .attr("stroke-width", 1.5)
+        .attr("id", "winter-sun")
+        .attr("opacity", 0.8);
+      
+      // 太陽の初期位置
+      const summerAngle = -Math.PI;
+      const equinoxAngle = -Math.PI;
+      const winterAngle = -Math.PI;
+      
+      updateSun(summerSun, summerAngle, centerX, baseY, radius * 0.9);
+      updateSun(equinoxSun, equinoxAngle, centerX, baseY, radius * 0.6);
+      updateSun(winterSun, winterAngle, centerX, baseY, radius * 0.3);
+      
+      // アニメーション制御
+      let animationRunning = true;
+      let animationId;
+      let currentSummerAngle = summerAngle;
+      let currentEquinoxAngle = equinoxAngle;
+      let currentWinterAngle = winterAngle;
+      
+      function updateSun(sun, angle, cx, cy, r) {
+        const x = cx + Math.cos(angle) * r;
+        const y = cy + Math.sin(angle) * r;
+        sun.attr("cx", x).attr("cy", y);
+      }
+      
+      function animate() {
+        if (currentSummerAngle >= 0) currentSummerAngle = -Math.PI;
+        if (currentEquinoxAngle >= 0) currentEquinoxAngle = -Math.PI;
+        if (currentWinterAngle >= 0) currentWinterAngle = -Math.PI;
+        
+        currentSummerAngle += 0.01;
+        currentEquinoxAngle += 0.01;
+        currentWinterAngle += 0.01;
+        
+        updateSun(summerSun, currentSummerAngle, centerX, baseY, radius * 0.9);
+        updateSun(equinoxSun, currentEquinoxAngle, centerX, baseY, radius * 0.6);
+        updateSun(winterSun, currentWinterAngle, centerX, baseY, radius * 0.3);
+        
+        if (animationRunning) {
+          animationId = requestAnimationFrame(animate);
+        }
+      }
+      
+      animate();
+      
+      // 操作ボタンの処理
+      d3.select("#play-sun").on("click", function() {
+        animationRunning = !animationRunning;
+        if (animationRunning) {
+          animate();
+        } else {
+          cancelAnimationFrame(animationId);
+        }
+      });
+      
+      d3.select("#reset-sun").on("click", function() {
+        cancelAnimationFrame(animationId);
+        currentSummerAngle = summerAngle;
+        currentEquinoxAngle = equinoxAngle;
+        currentWinterAngle = winterAngle;
+        updateSun(summerSun, currentSummerAngle, centerX, baseY, radius * 0.9);
+        updateSun(equinoxSun, currentEquinoxAngle, centerX, baseY, radius * 0.6);
+        updateSun(winterSun, currentWinterAngle, centerX, baseY, radius * 0.3);
+        if (animationRunning) {
+          animate();
+        }
+      });
+    }
+    
+    // 2. 星の動き（日周運動）の描画
+    function createStarMovement() {
+      const width = 500;
+      const height = 300;
+      const margin = { top: 20, right: 20, bottom: 20, left: 20 };
+      
+      const svg = d3.select("#star-movement")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("viewBox", `0 0 ${width} ${height}`)
+        .attr("preserveAspectRatio", "xMidYMid meet");
+      
+      // 背景（夜空）
+      svg.append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "black");
+      
+      const centerX = width / 2;
+      const baseY = height - margin.bottom;
+      const radius = 180;
+      
+      // 半円（天球）
+      svg.append("path")
+        .attr("d", d3.arc()
+          .innerRadius(0)
+          .outerRadius(radius)
+          .startAngle(-Math.PI)
+          .endAngle(0)
+        )
+        .attr("transform", `translate(${centerX}, ${baseY})`)
+        .attr("fill", "none")
+        .attr("stroke", "#333")
+        .attr("stroke-width", 1);
+      
+      // 地平線
+      svg.append("line")
+        .attr("x1", centerX - radius)
+        .attr("y1", baseY)
+        .attr("x2", centerX + radius)
+        .attr("y2", baseY)
+        .attr("stroke", "white")
+        .attr("stroke-width", 1)
+        .attr("stroke-opacity", 0.5);
+      
+      // 北極星（緯度35度を想定）
+      const polarisY = baseY - radius * 0.35; // 35°の高度
+      svg.append("circle")
+        .attr("cx", centerX)
+        .attr("cy", polarisY)
+        .attr("r", 3)
+        .attr("fill", "yellow");
+      
+      // 北極星ラベル
+      svg.append("text")
+        .attr("x", centerX)
+        .attr("y", polarisY - 10)
+        .attr("text-anchor", "middle")
+        .attr("fill", "yellow")
+        .style("font-size", "12px")
+        .text("北極星");
+      
+      // 星の円周軌道
+      const starCircles = [
+        { radius: 30, stars: 8 },
+        { radius: 70, stars: 12 },
+        { radius: 120, stars: 16 }
+      ];
+      
+      // 円周（点線）
+      starCircles.forEach(circle => {
+        svg.append("circle")
+          .attr("cx", centerX)
+          .attr("cy", polarisY)
+          .attr("r", circle.radius)
+          .attr("fill", "none")
+          .attr("stroke", "rgba(255, 255, 255, 0.3)")
+          .attr("stroke-width", 1)
+          .attr("stroke-dasharray", "2,3");
+      });
+      
+      // 星を生成
+      let stars = [];
+      starCircles.forEach(circle => {
+        for (let i = 0; i < circle.stars; i++) {
+          const angle = (i / circle.stars) * Math.PI * 2;
+          stars.push({
+            cx: centerX + Math.cos(angle) * circle.radius,
+            cy: polarisY + Math.sin(angle) * circle.radius,
+            r: Math.random() * 1.5 + 1,
+            circleRadius: circle.radius,
+            angle: angle,
+            speed: 0.01 * (1 - circle.radius / 200), // 内側ほど速く回る
+            opacity: Math.random() * 0.5 + 0.5
+          });
+        }
+      });
+      
+      // 星の描画
+      const starElements = svg.selectAll(".star")
+        .data(stars)
+        .enter()
+        .append("circle")
+        .attr("class", "star")
+        .attr("cx", d => d.cx)
+        .attr("cy", d => d.cy)
+        .attr("r", d => d.r)
+        .attr("fill", "white")
+        .attr("opacity", d => d.opacity);
+      
+      // 方角ラベル
+      svg.append("text")
+        .attr("x", centerX - radius - 10)
+        .attr("y", baseY)
+        .attr("text-anchor", "end")
+        .attr("fill", "white")
+        .style("font-weight", "bold")
+        .text("東");
+      
+      svg.append("text")
+        .attr("x", centerX + radius + 10)
+        .attr("y", baseY)
+        .attr("text-anchor", "start")
+        .attr("fill", "white")
+        .style("font-weight", "bold")
+        .text("西");
+      
+      // アニメーション制御
+      let animationRunning = true;
+      let animationId;
+      
+      function animate() {
+        // 星の位置更新（反時計回り）
+        stars.forEach(star => {
+          star.angle -= star.speed;
+          if (star.angle < 0) star.angle += Math.PI * 2;
+          
+          star.cx = centerX + Math.cos(star.angle) * star.circleRadius;
+          star.cy = polarisY + Math.sin(star.angle) * star.circleRadius;
+        });
+        
+        // 星の位置を更新
+        starElements
+          .attr("cx", d => d.cx)
+          .attr("cy", d => d.cy)
+          .attr("opacity", d => {
+            // 地平線より下の星は非表示
+            return d.cy >= baseY ? 0 : d.opacity;
+          });
+        
+        if (animationRunning) {
+          animationId = requestAnimationFrame(animate);
+        }
+      }
+      
+      animate();
+      
+      // 操作ボタンの処理
+      d3.select("#play-stars").on("click", function() {
+        animationRunning = !animationRunning;
+        if (animationRunning) {
+          animate();
+        } else {
+          cancelAnimationFrame(animationId);
+        }
+      });
+      
+      d3.select("#reset-stars").on("click", function() {
+        cancelAnimationFrame(animationId);
+        
+        // 星の位置をリセット
+        stars.forEach((star, i) => {
+          const circleInfo = starCircles[Math.floor(i / 10)];
+          const initialAngle = (i % circleInfo.stars) / circleInfo.stars * Math.PI * 2;
+          star.angle = initialAngle;
+          star.cx = centerX + Math.cos(initialAngle) * star.circleRadius;
+          star.cy = polarisY + Math.sin(initialAngle) * star.circleRadius;
+        });
+        
+        starElements
+          .attr("cx", d => d.cx)
+          .attr("cy", d => d.cy)
+          .attr("opacity", d => d.cy >= baseY ? 0 : d.opacity);
+        
+        if (animationRunning) {
+          animate();
+        }
+      });
+    }
+    
+    // 3. 地軸の傾きがわかる図（季節の図）の描画
+    function createEarthAxis() {
+      const width = 600;
+      const height = 400;
+      const margin = { top: 40, right: 20, bottom: 20, left: 20 };
+      
+      const svg = d3.select("#earth-axis")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("viewBox", `0 0 ${width} ${height}`)
+        .attr("preserveAspectRatio", "xMidYMid meet");
+      
+      // 背景色
+      svg.append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "#f0f8ff");
+      
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const orbitRadius = 150;
+      const earthRadius = 20;
+      const axisAngle = -23.4; // 地軸の傾き（度）
+      
+      // 公転軌道
+      svg.append("circle")
+        .attr("cx", centerX)
+        .attr("cy", centerY)
+        .attr("r", orbitRadius)
+        .attr("fill", "none")
+        .attr("stroke", "#aaa")
+        .attr("stroke-width", 1)
+        .attr("stroke-dasharray", "5,3");
+      
+      // 太陽
+      const sun = svg.append("circle")
+        .attr("cx", centerX)
+        .attr("cy", centerY)
+        .attr("r", 30)
+        .attr("fill", "yellow")
+        .attr("stroke", "orange")
+        .attr("stroke-width", 2);
+      
+      // 太陽の光芒
+      const sunRays = [];
+      for (let i = 0; i < 12; i++) {
+        const angle = i * Math.PI / 6;
+        const x1 = centerX + Math.cos(angle) * 35;
+        const y1 = centerY + Math.sin(angle) * 35;
+        const x2 = centerX + Math.cos(angle) * 45;
+        const y2 = centerY + Math.sin(angle) * 45;
+        
+        sunRays.push({ x1, y1, x2, y2 });
+      }
+      
+      svg.selectAll(".sun-ray")
+        .data(sunRays)
+        .enter()
+        .append("line")
+        .attr("class", "sun-ray")
+        .attr("x1", d => d.x1)
+        .attr("y1", d => d.y1)
+        .attr("x2", d => d.x2)
+        .attr("y2", d => d.y2)
+        .attr("stroke", "orange")
+        .attr("stroke-width", 2)
+        .attr("opacity", 0.7);
+      
+      // 固定位置の地球を描画
+      function createEarth(angle, season) {
+        const group = svg.append("g")
+          .attr("class", season);
+        
+        const x = centerX + Math.cos(angle) * orbitRadius;
+        const y = centerY + Math.sin(angle) * orbitRadius;
+        
+        // 地球
+        group.append("circle")
+          .attr("cx", x)
+          .attr("cy", y)
+          .attr("r", earthRadius)
+          .attr("fill", "#3498db")
+          .attr("stroke", "#2980b9")
+          .attr("stroke-width", 1);
+        
+        // 地軸
+        const axisLength = earthRadius * 1.5;
+        
+        group.append("line")
+          .attr("x1", x)
+          .attr("y1", y - axisLength)
+          .attr("x2", x)
+          .attr("y2", y + axisLength)
+          .attr("stroke", "red")
+          .attr("stroke-width", 2)
+          .attr("transform", `rotate(${axisAngle}, ${x}, ${y})`);
+        
+        // 北極
+        group.append("circle")
+          .attr("cx", x + Math.sin(axisAngle * Math.PI / 180) * axisLength)
+          .attr("cy", y - Math.cos(axisAngle * Math.PI / 180) * axisLength)
+          .attr("r", 3)
+          .attr("fill", "white")
+          .attr("stroke", "red")
+          .attr("stroke-width", 1);
+        
+        // 季節ラベル
+        let labelX = x;
+        let labelY = y;
+        let offset = 40;
+        
+        if (season === "summer") {
+          labelY -= offset;
+        } else if (season === "winter") {
+          labelY += offset;
+        } else if (season === "spring") {
+          labelX += offset;
+        } else if (season === "autumn") {
+          labelX -= offset;
+        }
+        
+        const seasonText = {
+          summer: "夏至",
+          winter: "冬至",
+          spring: "春分",
+          autumn: "秋分"
+        }[season];
+        
+        group.append("text")
+          .attr("x", labelX)
+          .attr("y", labelY)
+          .attr("text-anchor", "middle")
+          .attr("fill", "#333")
+          .style("font-weight", "bold")
+          .text(seasonText);
+        
+        return { x, y };
+      }
+      
+      // 四季の地球配置
+      createEarth(Math.PI * 0.5, "summer");  // 夏至
+      createEarth(Math.PI * 1.5, "winter");  // 冬至
+      createEarth(0, "spring");          // 春分
+      createEarth(Math.PI, "autumn");    // 秋分
+      
+      // 動く地球
+      const earthGroup = svg.append("g").attr("class", "moving-earth");
+      
+      let initialAngle = -Math.PI * 0.5; // 春分から開始
+      let earthX = centerX + Math.cos(initialAngle) * orbitRadius;
+      let earthY = centerY + Math.sin(initialAngle) * orbitRadius;
+      
+      // 地球
+      const movingEarth = earthGroup.append("circle")
+        .attr("cx", earthX)
+        .attr("cy", earthY)
+        .attr("r", earthRadius)
+        .attr("fill", "#3498db")
+        .attr("fill-opacity", 0.8)
+        .attr("stroke", "#2980b9")
+        .attr("stroke-width", 1);
+      
+      // 地軸
+      const movingAxis = earthGroup.append("line")
+        .attr("x1", earthX)
+        .attr("y1", earthY - earthRadius * 1.5)
+        .attr("x2", earthX)
+        .attr("y2", earthY + earthRadius * 1.5)
+        .attr("stroke", "red")
+        .attr("stroke-width", 2)
+        .attr("transform", `rotate(${axisAngle}, ${earthX}, ${earthY})`);
+      
+      // 北極
+      const movingNorth = earthGroup.append("circle")
+        .attr("cx", earthX + Math.sin(axisAngle * Math.PI / 180) * earthRadius * 1.5)
+        .attr("cy", earthY - Math.cos(axisAngle * Math.PI / 180) * earthRadius * 1.5)
+        .attr("r", 3)
+        .attr("fill", "white")
+        .attr("stroke", "red")
+        .attr("stroke-width", 1);
+      
+      // 公転の矢印
+      const arrowX = centerX;
+      const arrowY = centerY - orbitRadius - 10;
+      
+      svg.append("path")
+        .attr("d", `M${arrowX},${arrowY} L${arrowX-8},${arrowY+8} L${arrowX-4},${arrowY+3} L${arrowX-12},${arrowY+12} L${arrowX-8},${arrowY+16} L${arrowX-3},${arrowY+12}Z`)
+        .attr("fill", "#333");
+      
+      svg.append("text")
+        .attr("x", arrowX - 20)
+        .attr("y", arrowY - 10)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#333")
+        .style("font-size", "14px")
+        .text("公転方向（反時計回り）");
+      
+      // タイトル
+      svg.append("text")
+        .attr("x", centerX)
+        .attr("y", margin.top - 10)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#333")
+        .style("font-size", "16px")
+        .style("font-weight", "bold")
+        .text("地軸は常に約23.4度傾いています");
+      
+      // アニメーション制御
+      let animationRunning = true;
+      let animationId;
+      let currentAngle = initialAngle;
+      
+      function updateEarthPosition(angle) {
+        const x = centerX + Math.cos(angle) * orbitRadius;
+        const y = centerY + Math.sin(angle) * orbitRadius;
+        
+        movingEarth.attr("cx", x).attr("cy", y);
+        
+        movingAxis
+          .attr("x1", x)
+          .attr("y1", y - earthRadius * 1.5)
+          .attr("x2", x)
+          .attr("y2", y + earthRadius * 1.5)
+          .attr("transform", `rotate(${axisAngle}, ${x}, ${y})`);
+        
+        movingNorth
+          .attr("cx", x + Math.sin(axisAngle * Math.PI / 180) * earthRadius * 1.5)
+          .attr("cy", y - Math.cos(axisAngle * Math.PI / 180) * earthRadius * 1.5);
+      }
+      
+      function animate() {
+        currentAngle -= 0.005; // 反時計回り
+        if (currentAngle <= -Math.PI * 2) currentAngle = 0;
+        
+        updateEarthPosition(currentAngle);
+        
+        if (animationRunning) {
+          animationId = requestAnimationFrame(animate);
+        }
+      }
+      
+      animate();
+      
+      // 操作ボタンの処理
+      d3.select("#play-orbit").on("click", function() {
+        animationRunning = !animationRunning;
+        if (animationRunning) {
+          animate();
+        } else {
+          cancelAnimationFrame(animationId);
+        }
+      });
+      
+      d3.select("#reset-orbit").on("click", function() {
+        cancelAnimationFrame(animationId);
+        currentAngle = initialAngle;
+        updateEarthPosition(currentAngle);
+        if (animationRunning) {
+          animate();
+        }
+      });
+    }
+    
+    // 4. 北極から見た図（時刻と方角の図）の描画
+    function createNorthPoleView() {
+      const width = 500;
+      const height = 500;
+      const margin = { top: 20, right: 20, bottom: 20, left: 20 };
+      
+      const svg = d3.select("#north-pole-view")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("viewBox", `0 0 ${width} ${height}`)
+        .attr("preserveAspectRatio", "xMidYMid meet");
+      
+      // 背景色
+      svg.append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "#e6f7ff");
+      
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const radius = 200;
+      
+      // 地球（円）
+      svg.append("circle")
+        .attr("cx", centerX)
+        .attr("cy", centerY)
+        .attr("r", radius)
+        .attr("fill", "#a7d8ff")
+        .attr("stroke", "#2980b9")
+        .attr("stroke-width", 2);
+      
+      // 北極
+      svg.append("circle")
+        .attr("cx", centerX)
+        .attr("cy", centerY)
+        .attr("r", 5)
+        .attr("fill", "red");
+      
+      // 北極ラベル
+      svg.append("text")
+        .attr("x", centerX)
+        .attr("y", centerY - 15)
+        .attr("text-anchor", "middle")
+        .attr("fill", "red")
+        .style("font-weight", "bold")
+        .text("北極");
+      
+      // 自転方向の矢印（円弧）
+      const arcGenerator = d3.arc()
+        .innerRadius(radius * 0.7)
+        .outerRadius(radius * 0.7)
+        .startAngle(Math.PI * 0.8)
+        .endAngle(Math.PI * 1.3);
+      
+      svg.append("path")
+        .attr("d", arcGenerator)
+        .attr("transform", `translate(${centerX}, ${centerY})`)
+        .attr("fill", "none")
+        .attr("stroke", "#2980b9")
+        .attr("stroke-width", 2);
+      
+      // 矢印の先端
+      const arrowAngle = Math.PI * 1.3;
+      const arrowX = centerX + Math.cos(arrowAngle) * radius * 0.7;
+      const arrowY = centerY + Math.sin(arrowAngle) * radius * 0.7;
+      
+      svg.append("path")
+        .attr("d", `M${arrowX},${arrowY} L${arrowX-10},${arrowY-5} L${arrowX-5},${arrowY+10}Z`)
+        .attr("fill", "#2980b9");
+      
+      // 自転の説明
+      svg.append("text")
+        .attr("x", centerX)
+        .attr("y", centerY - radius * 0.5)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#2980b9")
+        .style("font-size", "14px")
+        .text("自転方向（反時計回り）");
+      
+      // 太陽方向
+      const sunX = width - 50;
+      const sunY = centerY;
+      
+      svg.append("circle")
+        .attr("cx", sunX)
+        .attr("cy", sunY)
+        .attr("r", 20)
+        .attr("fill", "yellow")
+        .attr("stroke", "orange")
+        .attr("stroke-width", 2);
+      
+      // 太陽光の矢印
+      for (let i = -20; i <= 20; i += 20) {
+        svg.append("line")
+          .attr("x1", sunX - 30)
+          .attr("y1", sunY + i)
+          .attr("x2", sunX - 50)
+          .attr("y2", sunY + i)
+          .attr("stroke", "orange")
+          .attr("stroke-width", 2);
+      }
+      
+      // 時刻ラベル
+      svg.append("text")
+        .attr("x", centerX)
+        .attr("y", centerY - radius - 20)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#333")
+        .style("font-weight", "bold")
+        .text("12時（昼）");
+      
+      svg.append("text")
+        .attr("x", centerX)
+        .attr("y", centerY + radius + 20)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#333")
+        .style("font-weight", "bold")
+        .text("0時（夜）");
+      
+      svg.append("text")
+        .attr("x", centerX - radius - 20)
+        .attr("y", centerY)
+        .attr("text-anchor", "end")
+        .attr("fill", "#333")
+        .style("font-weight", "bold")
+        .text("18時（夕）");
+      
+      svg.append("text")
+        .attr("x", centerX + radius + 20)
+        .attr("y", centerY)
+        .attr("text-anchor", "start")
+        .attr("fill", "#333")
+        .style("font-weight", "bold")
+        .text("6時（朝）");
+      
+      // 方角ラベル
+      svg.append("text")
+        .attr("x", centerX)
+        .attr("y", centerY - radius + 20)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#333")
+        .style("font-weight", "bold")
+        .text("南");
+      
+      svg.append("text")
+        .attr("x", centerX)
+        .attr("y", centerY + radius - 20)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#333")
+        .style("font-weight", "bold")
+        .text("北");
+      
+      svg.append("text")
+        .attr("x", centerX - radius + 20)
+        .attr("y", centerY)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#333")
+        .style("font-weight", "bold")
+        .text("西");
+      
+      svg.append("text")
+        .attr("x", centerX + radius - 20)
+        .attr("y", centerY)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#333")
+        .style("font-weight", "bold")
+        .text("東");
+      
+      // 人（地球上の観測者）の描画
+      function createPerson(time, color) {
+        // 時刻から角度へ変換（12時を基準に時計回り）
+        const angle = ((time - 12) / 12) * Math.PI;
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
+        
+        const group = svg.append("g")
+          .attr("class", `person-${time}`);
+        
+        // 人を描画（地球の中心を向くように回転）
+        group.attr("transform", `translate(${x}, ${y}) rotate(${angle * 180 / Math.PI + 90})`);
+        
+        // 人の図形
+        group.append("circle") // 頭
+          .attr("cx", 0)
+          .attr("cy", -10)
+          .attr("r", 5)
+          .attr("fill", color);
+        
+        group.append("line") // 胴体
+          .attr("x1", 0)
+          .attr("y1", -5)
+          .attr("x2", 0)
+          .attr("y2", 10)
+          .attr("stroke", color)
+          .attr("stroke-width", 2);
+        
+        group.append("line") // 左腕
+          .attr("x1", 0)
+          .attr("y1", 0)
+          .attr("x2", -8)
+          .attr("y2", -5)
+          .attr("stroke", color)
+          .attr("stroke-width", 2);
+        
+        group.append("line") // 右腕
+          .attr("x1", 0)
+          .attr("y1", 0)
+          .attr("x2", 8)
+          .attr("y2", -5)
+          .attr("stroke", color)
+          .attr("stroke-width", 2);
+        
+        group.append("line") // 左足
+          .attr("x1", 0)
+          .attr("y1", 10)
+          .attr("x2", -5)
+          .attr("y2", 18)
+          .attr("stroke", color)
+          .attr("stroke-width", 2);
+        
+        group.append("line") // 右足
+          .attr("x1", 0)
+          .attr("y1", 10)
+          .attr("x2", 5)
+          .attr("y2", 18)
+          .attr("stroke", color)
+          .attr("stroke-width", 2);
+        
+        return group;
+      }
+      
+      // 基準時刻の人を描画
+      createPerson(0, "navy");   // 0時（夜中）
+      createPerson(6, "green");  // 6時（朝）
+      createPerson(12, "darkred"); // 12時（昼）
+      createPerson(18, "purple"); // 18時（夕方）
+      
+      // 月の満ち欠けの描画
+      function createMoon(phase, label) {
+        // 月の位相から角度へ変換（0が新月、0.5が満月）
+        const angle = phase * Math.PI * 2 - Math.PI / 2;
+        const moonRadius = 15;
+        const orbitRadius = radius + 40; // 地球の外側
+        
+        const x = centerX + Math.cos(angle) * orbitRadius;
+        const y = centerY + Math.sin(angle) * orbitRadius;
+        
+        const group = svg.append("g")
+          .attr("class", `moon-${phase}`);
+        
+        // 月（基本円）
+        group.append("circle")
+          .attr("cx", x)
+          .attr("cy", y)
+          .attr("r", moonRadius)
+          .attr("fill", "#ddd")
+          .attr("stroke", "#999")
+          .attr("stroke-width", 1);
+        
+        // 月の満ち欠け（影の部分）
+        if (phase !== 0.5) { // 満月以外
+          let d = "";
+          
+          if (phase < 0.25 || phase > 0.75) {
+            // 右側が欠ける（新月～上弦、下弦～新月）
+            const controlX = phase < 0.25 ? 
+              x + moonRadius * (0.25 - phase) / 0.25 * 4 : 
+              x + moonRadius * (phase - 0.75) / 0.25 * 4;
+            
+            d = `M ${x} ${y - moonRadius}
+                 A ${moonRadius} ${moonRadius} 0 0 1 ${x} ${y + moonRadius}
+                 A ${moonRadius} ${moonRadius} 0 0 1 ${x} ${y - moonRadius}`;
+          } else {
+            // 左側が欠ける（上弦～満月～下弦）
+            const controlX = phase < 0.5 ? 
+              x - moonRadius * (phase - 0.25) / 0.25 * 4 : 
+              x - moonRadius * (0.75 - phase) / 0.25 * 4;
+            
+            d = `M ${x} ${y - moonRadius}
+                 A ${moonRadius} ${moonRadius} 0 0 0 ${x} ${y + moonRadius}
+                 A ${moonRadius} ${moonRadius} 0 0 0 ${x} ${y - moonRadius}`;
+          }
+          
+          group.append("path")
+            .attr("d", d)
+            .attr("fill", "#a7d8ff"); // 空の色で影を表現
+        }
+        
+        // 月のラベル
+        if (label) {
+          group.append("text")
+            .attr("x", x)
+            .attr("y", y + moonRadius + 15)
+            .attr("text-anchor", "middle")
+            .attr("fill", "#333")
+            .style("font-size", "12px")
+            .text(label);
+        }
+      }
+      
+      // 月の満ち欠けを描画
+      createMoon(0, "新月");
+      createMoon(0.25, "上弦の月");
+      createMoon(0.5, "満月");
+      createMoon(0.75, "下弦の月");
+      
+      // 動く人
+      const movingPerson = createPerson(0, "black").attr("id", "moving-person");
+      
+      // アニメーション制御
+      let animationRunning = true;
+      let animationId;
+      let currentTime = 0;
+      
+      function updatePersonPosition(time) {
+        // 時刻から角度へ変換（12時を基準に時計回り）
+        const angle = ((time - 12) / 12) * Math.PI;
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
+        
+        movingPerson
+          .attr("transform", `translate(${x}, ${y}) rotate(${angle * 180 / Math.PI + 90})`);
+      }
+      
+      function animate() {
+        currentTime += 0.1;
+        if (currentTime >= 24) currentTime = 0;
+        
+        updatePersonPosition(currentTime);
+        
+        if (animationRunning) {
+          animationId = requestAnimationFrame(animate);
+        }
+      }
+      
+      animate();
+      
+      // 操作ボタンの処理
+      d3.select("#play-rotation").on("click", function() {
+        animationRunning = !animationRunning;
+        if (animationRunning) {
+          animate();
+        } else {
+          cancelAnimationFrame(animationId);
+        }
+      });
+      
+      d3.select("#reset-rotation").on("click", function() {
+        cancelAnimationFrame(animationId);
+        currentTime = 0;
+        updatePersonPosition(currentTime);
+        if (animationRunning) {
+          animate();
+        }
+      });
+    }
+    
+    // 5. 星座の描画
+    function createConstellations() {
+      const width = 600;
+      const height = 400;
+      
+      const svg = d3.select("#constellations")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("viewBox", `0 0 ${width} ${height}`)
+        .attr("preserveAspectRatio", "xMidYMid meet");
+      
+      // 背景色
+      svg.append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "black");
+      
+      // 季節ごとの領域を作成
+      const seasons = ["春", "夏", "秋", "冬"];
+      const seasonColors = ["#73c273", "#cc9966", "#cc6633", "#6699cc"];
+      const gridWidth = width / 2;
+      const gridHeight = height / 2;
+      
+      for (let i = 0; i < seasons.length; i++) {
+        const x = (i % 2) * gridWidth;
+        const y = Math.floor(i / 2) * gridHeight;
+        
+        // 季節の領域
+        svg.append("rect")
+          .attr("x", x)
+          .attr("y", y)
+          .attr("width", gridWidth)
+          .attr("height", gridHeight)
+          .attr("fill", "black")
+          .attr("stroke", seasonColors[i])
+          .attr("stroke-width", 2)
+          .attr("opacity", 0.7);
+        
+        // 季節のラベル
+        svg.append("text")
+          .attr("x", x + gridWidth / 2)
+          .attr("y", y + 20)
+          .attr("text-anchor", "middle")
+          .attr("fill", seasonColors[i])
+          .style("font-weight", "bold")
+          .text(`${seasons[i]}の星座`);
+      }
+      
+      // 星の描画関数
+      function drawStar(x, y, radius, color) {
+        const group = svg.append("g")
+          .attr("class", "star");
+        
+        // 星本体
+        group.append("circle")
+          .attr("cx", x)
+          .attr("cy", y)
+          .attr("r", radius)
+          .attr("fill", color);
+        
+        // 光芒
+        for (let i = 0; i < 6; i++) {
+          const angle = i * Math.PI / 3;
+          const len = radius * 1.5;
+          
+          group.append("line")
+            .attr("x1", x)
+            .attr("y1", y)
+            .attr("x2", x + Math.cos(angle) * len)
+            .attr("y2", y + Math.sin(angle) * len)
+            .attr("stroke", color)
+            .attr("stroke-width", 1)
+            .attr("stroke-opacity", 0.5);
+        }
+        
+        return group;
+      }
+      
+      // 星座線の描画関数
+      function drawConstellation(stars, color) {
+        if (stars.length < 2) return;
+        
+        let path = `M ${stars[0].x} ${stars[0].y}`;
+        
+        for (let i = 1; i < stars.length; i++) {
+          path += ` L ${stars[i].x} ${stars[i].y}`;
+        }
+        
+        svg.append("path")
+          .attr("d", path)
+          .attr("fill", "none")
+          .attr("stroke", color)
+          .attr("stroke-width", 1)
+          .attr("stroke-opacity", 0.6);
+      }
+      
+      // 季節ごとの星座
+      
+      // 1. 春の星座（左上）
+      const springX = 0;
+      const springY = 0;
+      
+      // アークトゥルス（うしかい座）
+      const arcturus = { x: springX + 100, y: springY + 100 };
+      drawStar(arcturus.x, arcturus.y, 4, "orange");
+      
+      svg.append("text")
+        .attr("x", arcturus.x + 10)
+        .attr("y", arcturus.y)
+        .attr("fill", "white")
+        .style("font-size", "12px")
+        .text("アークトゥルス");
+      
+      // スピカ（おとめ座）
+      const spica = { x: springX + 180, y: springY + 170 };
+      drawStar(spica.x, spica.y, 4, "cyan");
+      
+      svg.append("text")
+        .attr("x", spica.x + 10)
+        .attr("y", spica.y)
+        .attr("fill", "white")
+        .style("font-size", "12px")
+        .text("スピカ");
+      
+      // レグルス（しし座）
+      const regulus = { x: springX + 70, y: springY + 170 };
+      drawStar(regulus.x, regulus.y, 4, "lightblue");
+      
+      svg.append("text")
+        .attr("x", regulus.x + 10)
+        .attr("y", regulus.y)
+        .attr("fill", "white")
+        .style("font-size", "12px")
+        .text("レグルス");
+      
+      // 春の大三角
+      drawConstellation([arcturus, spica, regulus, arcturus], seasonColors[0]);
+      
+      // 2. 夏の星座（右上）
+      const summerX = gridWidth;
+      const summerY = 0;
+      
+      // ベガ（こと座）
+      const vega = { x: summerX + 80, y: summerY + 80 };
+      drawStar(vega.x, vega.y, 4, "white");
+      
+      svg.append("text")
+        .attr("x", vega.x + 10)
+        .attr("y", vega.y)
+        .attr("fill", "white")
+        .style("font-size", "12px")
+        .text("ベガ");
+      
+      // アルタイル（わし座）
+      const altair = { x: summerX + 150, y: summerY + 150 };
+      drawStar(altair.x, altair.y, 4, "white");
+      
+      svg.append("text")
+        .attr("x", altair.x + 10)
+        .attr("y", altair.y)
+        .attr("fill", "white")
+        .style("font-size", "12px")
+        .text("アルタイル");
+      
+      // デネブ（はくちょう座）
+      const deneb = { x: summerX + 220, y: summerY + 70 };
+      drawStar(deneb.x, deneb.y, 4, "white");
+      
+      svg.append("text")
+        .attr("x", deneb.x + 10)
+        .attr("y", deneb.y)
+        .attr("fill", "white")
+        .style("font-size", "12px")
+        .text("デネブ");
+      
+      // アンタレス（さそり座）
+      const antares = { x: summerX + 130, y: summerY + 180 };
+      drawStar(antares.x, antares.y, 4, "red");
+      
+      svg.append("text")
+        .attr("x", antares.x + 10)
+        .attr("y", antares.y)
+        .attr("fill", "white")
+        .style("font-size", "12px")
+        .text("アンタレス");
+      
+      // 夏の大三角
+      drawConstellation([vega, altair, deneb, vega], seasonColors[1]);
+      
+      // 3. 秋の星座（左下）
+      const autumnX = 0;
+      const autumnY = gridHeight;
+      
+      // ペガスス座の四辺形
+      const pegasus1 = { x: autumnX + 60, y: autumnY + 60 };
+      const pegasus2 = { x: autumnX + 160, y: autumnY + 60 };
+      const pegasus3 = { x: autumnX + 160, y: autumnY + 160 };
+      const pegasus4 = { x: autumnX + 60, y: autumnY + 160 };
+      
+      drawStar(pegasus1.x, pegasus1.y, 3, "white");
+      drawStar(pegasus2.x, pegasus2.y, 3, "white");
+      drawStar(pegasus3.x, pegasus3.y, 3, "white");
+      drawStar(pegasus4.x, pegasus4.y, 3, "white");
+      
+      svg.append("text")
+        .attr("x", autumnX + 110)
+        .attr("y", autumnY + 120)
+        .attr("text-anchor", "middle")
+        .attr("fill", "white")
+        .style("font-size", "12px")
+        .text("ペガスス座の四辺形");
+      
+      // 秋の四辺形
+      drawConstellation([pegasus1, pegasus2, pegasus3, pegasus4, pegasus1], seasonColors[2]);
+      
+      // フォーマルハウト
+      const fomalhaut = { x: autumnX + 110, y: autumnY + 180 };
+      drawStar(fomalhaut.x, fomalhaut.y, 4, "white");
+      
+      svg.append("text")
+        .attr("x", fomalhaut.x + 10)
+        .attr("y", fomalhaut.y)
+        .attr("fill", "white")
+        .style("font-size", "12px")
+        .text("フォーマルハウト");
+      
+      // 4. 冬の星座（右下）
+      const winterX = gridWidth;
+      const winterY = gridHeight;
+      
+      // オリオン座
+      const betelgeuse = { x: winterX + 100, y: winterY + 80 }; // ベテルギウス
+      const rigel = { x: winterX + 80, y: winterY + 150 }; // リゲル
+      const belt1 = { x: winterX + 110, y: winterY + 120 }; // 三つ星左
+      const belt2 = { x: winterX + 130, y: winterY + 120 }; // 三つ星中
+      const belt3 = { x: winterX + 150, y: winterY + 120 }; // 三つ星右
+      
+      drawStar(betelgeuse.x, betelgeuse.y, 4, "red");
+      drawStar(rigel.x, rigel.y, 4, "cyan");
+      drawStar(belt1.x, belt1.y, 3, "white");
+      drawStar(belt2.x, belt2.y, 3, "white");
+      drawStar(belt3.x, belt3.y, 3, "white");
+      
+      svg.append("text")
+        .attr("x", betelgeuse.x + 10)
+        .attr("y", betelgeuse.y)
+        .attr("fill", "white")
+        .style("font-size", "12px")
+        .text("ベテルギウス");
+      
+      svg.append("text")
+        .attr("x", rigel.x + 10)
+        .attr("y", rigel.y)
+        .attr("fill", "white")
+        .style("font-size", "12px")
+        .text("リゲル");
+      
+      // オリオン座の線
+      drawConstellation([betelgeuse, belt2, rigel], "white");
+      drawConstellation([belt1, belt2, belt3], "white");
+      
+      // シリウス（おおいぬ座）
+      const sirius = { x: winterX + 180, y: winterY + 160 };
+      drawStar(sirius.x, sirius.y, 5, "white");
+      
+      svg.append("text")
+        .attr("x", sirius.x + 10)
+        .attr("y", sirius.y)
+        .attr("fill", "white")
+        .style("font-size", "12px")
+        .text("シリウス");
+      
+      // プロキオン（こいぬ座）
+      const procyon = { x: winterX + 200, y: winterY + 100 };
+      drawStar(procyon.x, procyon.y, 4, "yellow");
+      
+      svg.append("text")
+        .attr("x", procyon.x + 10)
+        .attr("y", procyon.y)
+        .attr("fill", "white")
+        .style("font-size", "12px")
+        .text("プロキオン");
+      
+      // 冬の大三角
+      drawConstellation([betelgeuse, sirius, procyon, betelgeuse], seasonColors[3]);
+      
+      // タイトル
+      svg.append("text")
+        .attr("x", width / 2)
+        .attr("y", height - 10)
+        .attr("text-anchor", "middle")
+        .attr("fill", "white")
+        .style("font-size", "14px")
+        .text("各季節の代表的な星座と一等星");
+    }
+    
+    // 全ての描画関数を実行
+    window.onload = function() {
+      createCelestialHemisphere();
+      createStarMovement();
+      createEarthAxis();
+      createNorthPoleView();
+      createConstellations();
+    };
+  </script>
+</body>
+</html>
