@@ -1,0 +1,139 @@
+{
+  "metadata": {
+    "subject": "算数",
+    "category_large": "基礎計算",
+    "category_small": "四則計算・逆算",
+    "version": "1.0.0",
+    "last_updated": "2025-11-09"
+  },
+  "quizzes": [
+    {
+      "id": "算数-001",
+      "subject": "算数",
+      "category_large": "基礎計算",
+      "category_small": "四則計算・逆算",
+      "difficulty": "基礎",
+      "question": "次の計算をしなさい。\n3.5 + 2.8 =",
+      "options": [
+        "5.3",
+        "6.3",
+        "6.13",
+        "5.13"
+      ],
+      "answer": 1,
+      "explanation": "3.5 + 2.8 = 6.3です。小数点以下の位を揃えて計算します。5 + 8 = 13なので、繰り上がりに注意しましょう。"
+    },
+    {
+      "id": "算数-002",
+      "subject": "算数",
+      "category_large": "基礎計算",
+      "category_small": "四則計算・逆算",
+      "difficulty": "基礎",
+      "question": "次の計算をしなさい。\n2/3 + 1/4 =",
+      "options": [
+        "3/7",
+        "11/12",
+        "5/12",
+        "3/12"
+      ],
+      "answer": 1,
+      "explanation": "2/3 + 1/4 = 8/12 + 3/12 = 11/12です。分母を12に通分してから計算します。"
+    },
+    {
+      "id": "算数-003",
+      "subject": "算数",
+      "category_large": "基礎計算",
+      "category_small": "四則計算・逆算",
+      "difficulty": "基礎",
+      "question": "次の計算をしなさい。\n5.6 × 0.3 =",
+      "options": [
+        "1.68",
+        "16.8",
+        "0.168",
+        "168"
+      ],
+      "answer": 0,
+      "explanation": "5.6 × 0.3 = 1.68です。56 × 3 = 168として、小数点の位置を考えます。小数点以下が1桁と1桁なので、答えは2桁になります。"
+    },
+    {
+      "id": "算数-004",
+      "subject": "算数",
+      "category_large": "基礎計算",
+      "category_small": "四則計算・逆算",
+      "difficulty": "標準",
+      "question": "□に入る数を求めなさい。\n□ × 6 + 8 = 50",
+      "options": [
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "answer": 1,
+      "explanation": "逆算をします。□ × 6 = 50 - 8 = 42、したがって □ = 42 ÷ 6 = 7です。"
+    },
+    {
+      "id": "算数-005",
+      "subject": "算数",
+      "category_large": "基礎計算",
+      "category_small": "四則計算・逆算",
+      "difficulty": "標準",
+      "question": "次の計算をしなさい。\n(3/4 - 1/3) × 12 =",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "answer": 1,
+      "explanation": "(3/4 - 1/3) × 12 = (9/12 - 4/12) × 12 = 5/12 × 12 = 5です。先にかっこ内を計算し、分母を12に通分します。"
+    },
+    {
+      "id": "算数-006",
+      "subject": "算数",
+      "category_large": "基礎計算",
+      "category_small": "四則計算・逆算",
+      "difficulty": "応用",
+      "question": "□に入る数を求めなさい。\n(□ - 5) × 3 + 7 = 28",
+      "options": [
+        "10",
+        "11",
+        "12",
+        "13"
+      ],
+      "answer": 2,
+      "explanation": "逆算をします。(□ - 5) × 3 = 28 - 7 = 21、したがって □ - 5 = 21 ÷ 3 = 7、よって □ = 7 + 5 = 12です。"
+    },
+    {
+      "id": "算数-007",
+      "subject": "算数",
+      "category_large": "基礎計算",
+      "category_small": "四則計算・逆算",
+      "difficulty": "応用",
+      "question": "次の計算をしなさい。\n2.5 × 4 - 6.8 ÷ 2 =",
+      "options": [
+        "6.4",
+        "6.6",
+        "6.8",
+        "7.0"
+      ],
+      "answer": 1,
+      "explanation": "2.5 × 4 - 6.8 ÷ 2 = 10 - 3.4 = 6.6です。掛け算と割り算を先に計算してから引き算をします。"
+    },
+    {
+      "id": "算数-008",
+      "subject": "算数",
+      "category_large": "基礎計算",
+      "category_small": "四則計算・逆算",
+      "difficulty": "発展",
+      "question": "□に入る数を求めなさい。\n3/4 ÷ □ + 1/2 = 2",
+      "options": [
+        "1/2",
+        "1/3",
+        "1/4",
+        "2/3"
+      ],
+      "answer": 0,
+      "explanation": "3/4 ÷ □ = 2 - 1/2 = 3/2、したがって □ = 3/4 ÷ 3/2 = 3/4 × 2/3 = 1/2です。"
+    }
+  ]
+}
