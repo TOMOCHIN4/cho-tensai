@@ -18,3 +18,11 @@
 - スクリプトはローカル環境で実行可能に準備済み
 - ユーザーのローカルPCで実行すればスクレイピング可能
 
+### Playwright/Chromiumでの追加検証
+- Playwrightをインストール、Chromiumブラウザも導入
+- `--no-proxy-server`オプションで試行 → `ERR_TUNNEL_CONNECTION_FAILED`
+- 環境変数クリア後に試行 → `ERR_NAME_NOT_RESOLVED`
+- 直接urllib使用 → DNS解決失敗
+
+**結論**: この環境はプロキシ経由でしかインターネットにアクセスできず、プロキシはnote.comを許可していない。どのツールを使っても回避不可能。
+
